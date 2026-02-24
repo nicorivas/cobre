@@ -18,6 +18,16 @@ nodo: macro/geopolitica
 - No directamente sobre cobre refinado (hasta 2025) pero sí sobre productos manufacturados
 - Redireccionamiento de cadenas de suministro vía terceros países
 
+### Fallo SCOTUS y transición a Section 122 (feb 2026)
+- 20-feb-2026: Corte Suprema anuló tariffs impuestos bajo IEEPA (6-3, Learning Resources v. Trump)
+- Trump reemplazó en horas con tariff global de 10% bajo Section 122 del Trade Act de 1974
+- Anunció subida a 15% el día siguiente
+- Section 122 tiene límite de 150 días sin aprobación del Congreso
+- Section 232 sobre cobre (50%) no fue afectado por el fallo — sigue vigente
+- Fecha clave: **30 de junio 2026** — Commerce Secretary entrega update de Section 232
+  sobre cobre; determina si se impone tariff escalonado sobre cátodo refinado
+  (15% desde ene-2027, 30% en 2028)
+
 ### Impacto de tariffs en el mercado
 
 | Efecto | Mecanismo |
@@ -26,6 +36,31 @@ nodo: macro/geopolitica
 | Redistribución de stocks | Metal se mueve de warehouses globales al país protegido |
 | Tightness artificial | Menos metal disponible fuera del país con tariff |
 | Incertidumbre en hedging | Basis risk adicional (¿COMEX o LME?) |
+
+### Fragmentación regional del mercado (feb 2026)
+
+A partir de la implementación de Section 232 y la acumulación masiva de inventarios
+en EE.UU., algunos analistas argumentan que el cobre dejó de operar como un commodity
+unificado y se fragmentó en tres mercados regionales con señales opuestas:
+
+- **COMEX/EE.UU.**: inventarios en máximos de 30 años (~590k short tons), premium
+  por tariff, metal "económicamente atrapado" que no puede salir
+- **LME/Europa-global**: inventarios en rebuild después de caer a <100 kt en dic-2025,
+  contango profundo, metal redireccionado desde EE.UU.
+- **SHFE/China**: comerciales con posiciones net short amplias (reportado como máximo
+  desde 2021), dinámica propia de restocking post-Año Nuevo Lunar
+
+Esta lectura es una posible interpretación, no un consenso de mercado. Tiene la
+virtud de explicar por qué Goldman ve surplus mientras JPMorgan ve un déficit de
+330 kt: podrían estar midiendo mercados distintos según si incluyen o no el metal
+atrapado en COMEX como "disponible". Sin embargo, la fragmentación podría ser
+transitoria — si el régimen tarifario cambia (expiración de Section 122, decisión
+de junio sobre cátodo) los tres mercados podrían reconverger.
+
+Implicación práctica: los análisis de balance global que tratan el cobre como un
+solo mercado con un solo precio pueden ser engañosos mientras persista Section 232.
+Conviene analizar balances regionales por separado y monitorear los arbs
+inter-exchange como indicadores de fragmentación.
 
 ## Riesgo de nacionalización y regulación minera
 

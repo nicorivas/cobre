@@ -56,6 +56,26 @@ Componentes del arb:
 
 Oportunidad: cuando el arb excede los costos de transporte + tariff → profitable to ship metal.
 
+#### Nota: el arb como indicador de fragmentación (feb 2026)
+
+Con Section 232 al 50% sobre cobre, el arb COMEX-LME dejó de comportarse como un
+spread de arbitraje clásico y pasó a funcionar como un termómetro de expectativas
+regulatorias. Algunos puntos a considerar:
+
+- La volatilidad del arb (rango de -$449 a +$169 en feb-2026) refleja repricing
+  continuo del régimen tarifario, no solo oferta/demanda regional
+- El arb puede oscilar violentamente alrededor de cero día a día, incluso cuando
+  la distorsión estructural (metal atrapado en COMEX) sigue vigente
+- Algunos analistas interpretan esta dinámica como evidencia de que COMEX, LME y
+  SHFE operan como tres mercados semi-independientes más que como un mercado
+  unificado con costos de transporte. Esta lectura es plausible pero no definitiva
+  — la fragmentación podría revertir si el régimen de tariffs cambia
+- Implicación: leer el arb como "normal" ($50-100/t) o "distorsionado" (>$500/t)
+  requiere ajustar por el tariff vigente. Un arb de $0 con Section 232 al 50% es
+  en sí mismo una señal de distorsión (alguien está absorbiendo el costo)
+- Fecha clave: 30-jun-2026 (update de Commerce sobre tariff a cátodo refinado).
+  La decisión podría ampliar o colapsar el arb estructuralmente
+
 ### LME-SHFE Arb
 
 ```
