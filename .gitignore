@@ -1,0 +1,12 @@
+# Base de datos (se regenera con init_db.py + fetch_all.py)
+datos/cobre.duckdb
+datos/cobre.duckdb.wal
+
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+datos/.venv/

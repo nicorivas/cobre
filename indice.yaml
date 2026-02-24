@@ -125,7 +125,7 @@ nodos:
     tags: [contango, backwardation, forward-curve, convenience-yield, cash-3M, roll-yield, theory-of-storage]
     requiere: [pricing/mecanismos-de-precio, trading/inventarios]
     alimenta: [derivados/spreads, derivados/coberturas]
-    relacionado: [fundamentos/balance-de-mercado]
+    relacionado: [fundamentos/balance-de-mercado, datos/pipeline]
 
   pricing/premiums-y-descuentos:
     archivo: pricing/premiums-y-descuentos.md
@@ -156,7 +156,7 @@ nodos:
     tags: [cobre-oro, cobre-USD, cobre-aluminio, correlaciones, PMI, cross-asset]
     requiere: []
     alimenta: []
-    relacionado: [macro/indicadores-macro, macro/ciclos-y-superciclos, tecnico/indicadores]
+    relacionado: [macro/indicadores-macro, macro/ciclos-y-superciclos, tecnico/indicadores, datos/pipeline]
 
   # ── TRADING ──────────────────────────────────────────────────
 
@@ -179,7 +179,7 @@ nodos:
     tags: [inventarios, LME-stocks, COMEX-stocks, SHFE-stocks, warrants, invisibles, bonded, SRB, days-of-coverage]
     requiere: [fundamentos/balance-de-mercado]
     alimenta: [pricing/estructura-de-termino, derivados/microestructura]
-    relacionado: [trading/flujos-comerciales, macro/china]
+    relacionado: [trading/flujos-comerciales, macro/china, datos/pipeline]
 
   trading/flujos-comerciales:
     archivo: trading/flujos-comerciales.md
@@ -199,7 +199,7 @@ nodos:
     tags: [COT, CFTC, managed-money, especuladores, comerciales, contrarian, open-interest]
     requiere: []
     alimenta: [tecnico/senales]
-    relacionado: [derivados/opciones-y-volatilidad, trading/inventarios]
+    relacionado: [derivados/opciones-y-volatilidad, trading/inventarios, datos/pipeline]
 
   trading/estacionalidad:
     archivo: trading/estacionalidad.md
@@ -245,7 +245,7 @@ nodos:
     tags: [spreads, calendar, inter-exchange, COMEX-LME, LME-SHFE, arbitrage, Cu-Al]
     requiere: [derivados/futuros-y-forwards, pricing/estructura-de-termino]
     alimenta: []
-    relacionado: [derivados/opciones-y-volatilidad, trading/estacionalidad]
+    relacionado: [derivados/opciones-y-volatilidad, trading/estacionalidad, datos/pipeline]
 
   derivados/coberturas:
     archivo: derivados/coberturas.md
@@ -415,7 +415,7 @@ nodos:
       CRU, Wood Mac, SMM, Fastmarkets, Platts, Bloomberg, Reuters.
     tags: [fuentes, ICSG, WBMS, LME, COMEX, SHFE, CFTC, Bloomberg, Reuters]
     requiere: []
-    alimenta: []
+    alimenta: [datos/pipeline]
     relacionado: [pricing/benchmarks]
 
   datos/apis-y-acceso:
@@ -425,7 +425,7 @@ nodos:
       FRED, World Bank. Acceso libre vs suscripción. Rate limits.
     tags: [APIs, LME-DataStore, CME-DataMine, Quandl, FRED, acceso]
     requiere: []
-    alimenta: []
+    alimenta: [datos/pipeline]
     relacionado: [datos/fuentes]
 
   datos/series-clave:
@@ -436,8 +436,20 @@ nodos:
       Yangshan premium, TC/RC spot, DXY, PMI global.
     tags: [series, monitoreo, precio, inventarios, COT, Yangshan, TC-RC, DXY, PMI]
     requiere: []
-    alimenta: []
+    alimenta: [datos/pipeline]
     relacionado: [datos/fuentes, datos/apis-y-acceso]
+
+  datos/pipeline:
+    archivo: datos/README.md
+    resumen: >
+      Pipeline de datos cuantitativos. Scripts Python que descargan datos de
+      mercado (COMEX, LME, CFTC COT, FRED macro) a una base DuckDB local.
+      Calcula spreads derivados: COMEX-LME arb, LME cash-3M, Cu/Au ratio.
+      Arquitectura de 3 capas (raw → clean → views) con ingesta idempotente.
+    tags: [pipeline, DuckDB, scripts, fetch, spreads, arb, COMEX-LME, cash-3M, automatizacion]
+    requiere: [datos/fuentes, datos/apis-y-acceso, datos/series-clave]
+    alimenta: []
+    relacionado: [pricing/estructura-de-termino, derivados/spreads, trading/inventarios, trading/posicionamiento]
 
   # ── REFERENCIAS ──────────────────────────────────────────────
 
@@ -554,8 +566,9 @@ rutas:
 
   analisis-semanal:
     descripcion: "Revisión semanal estándar del mercado"
-    entrada: "Inicio de semana"
+    entrada: "Inicio de semana (correr datos/scripts/fetch_all.py antes)"
     secuencia:
+      - datos/pipeline                   # Actualizar datos cuantitativos
       - trading/inventarios
       - pricing/estructura-de-termino
       - trading/posicionamiento

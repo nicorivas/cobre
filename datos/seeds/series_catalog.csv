@@ -1,0 +1,25 @@
+series_id,name,source,frequency,unit,description
+comex_hg,COMEX HG Copper Front Month,yfinance,daily,usd_per_lb,COMEX copper futures front month settlement
+lme_cash,LME Copper Cash Settlement,lme,daily,usd_per_ton,LME official cash settlement price
+lme_3m,LME Copper 3-Month,lme,daily,usd_per_ton,LME 3-month forward price
+shfe_cu,SHFE Copper Front Month,shfe,daily,cny_per_ton,Shanghai copper futures front month
+dxy,US Dollar Index (DXY),yfinance,daily,index,ICE US Dollar Index
+gold,Gold Spot,yfinance,daily,usd_per_oz,Gold spot price (XAU/USD)
+sp500,S&P 500,yfinance,daily,index,S&P 500 index
+us_10y,US 10-Year Treasury Yield,yfinance,daily,pct,US 10-year treasury yield
+lme_stocks_total,LME Total Stocks,lme,daily,metric_tons,LME total warehouse stocks
+lme_stocks_on_warrant,LME On-Warrant Stocks,lme,daily,metric_tons,LME on-warrant stocks (available)
+lme_stocks_cancelled,LME Cancelled Warrants,lme,daily,metric_tons,LME cancelled warrants
+comex_stocks_registered,COMEX Registered Stocks,cme,daily,metric_tons,COMEX registered warehouse stocks
+comex_stocks_eligible,COMEX Eligible Stocks,cme,daily,metric_tons,COMEX eligible warehouse stocks
+shfe_stocks,SHFE Copper Stocks,shfe,weekly,metric_tons,SHFE weekly warehouse stocks
+cot_managed_money_net,COT Managed Money Net Position,cftc,weekly,contracts,CFTC COT managed money net long/short
+fed_funds,Federal Funds Rate,fred,daily,pct,Effective federal funds rate
+indpro,Industrial Production Index,fred,monthly,index,US industrial production index (Fed)
+pmi_caixin,Caixin Manufacturing PMI,manual,monthly,index,Caixin China manufacturing PMI
+credit_impulse_cn,China Credit Impulse,manual,monthly,pct,China total social financing y-o-y change
+cn_cu_imports_refined,China Refined Copper Imports,manual,monthly,metric_tons,China monthly refined copper imports
+cn_cu_imports_conc,China Copper Concentrate Imports,manual,monthly,metric_tons,China monthly copper concentrate imports
+lme_cash_3m,LME Cash-3M Spread,calculated,daily,usd_per_ton,LME cash minus 3-month spread (backwardation if positive)
+comex_lme_arb,COMEX-LME Arbitrage,calculated,daily,usd_per_ton,COMEX equivalent price minus LME price
+cu_au_ratio,Copper/Gold Ratio,calculated,daily,ratio,Copper price divided by gold price (both in USD/ton equiv)

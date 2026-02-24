@@ -74,6 +74,13 @@ nodo: datos/apis-y-acceso
 - API: no oficial, web scraping posible
 - Useful para datos quick-and-dirty
 
+### Westmetall
+- URL: https://www.westmetall.com/en/markdaten.php?action=table&field=LME_Cu_cash
+- Datos: LME Copper Cash Settlement, 3-Month, y stocks totales (diarios)
+- Acceso: gratis, sin API key, datos desde 2008
+- Formato: HTML tabular, parseable con BeautifulSoup
+- Delay: 1 día hábil
+
 ## Consideraciones
 
 - **Datos de bolsa en tiempo real**: siempre de pago
@@ -82,3 +89,16 @@ nodo: datos/apis-y-acceso
 - **Fundamentales (inventarios, posicionamiento)**: mayormente gratis para los básicos
 - **Premiums y TC/RC**: siempre de pago (Fastmarkets, CRU)
 - **Cost curves**: siempre de pago (Wood Mac, CRU)
+
+## Pipeline automatizado
+
+Las fuentes marcadas arriba como gratuitas están integradas en el pipeline
+de datos del repo (`datos/scripts/`). Ver `datos/README.md` para setup y uso.
+
+| Script | Fuente | Datos | API key |
+|---|---|---|---|
+| `fetch_comex.py` | Yahoo Finance | COMEX HG, DXY, Gold, US 10Y, S&P 500 | No |
+| `fetch_lme.py` | Westmetall | LME Cash, 3M, stocks | No |
+| `fetch_cot.py` | CFTC | COT managed money, producers, swap dealers | No |
+| `fetch_fred.py` | FRED | Fed Funds, Industrial Production, Trade Weighted USD | Sí (gratis) |
+| `calc_spreads.py` | Calculado | COMEX-LME arb, LME Cash-3M, Cu/Au ratio | N/A |

@@ -25,6 +25,13 @@ outputs:                          # Qué produce
 
 Seguido de un **procedimiento** numerado que el agente ejecuta paso a paso.
 
+## Formato de output
+
+Todos los skills producen output en un **formato estandarizado** definido en
+[`formato-output.md`](formato-output.md). El formato asegura que los resultados
+sean escaneables, comparables, y — crucialmente — que la lógica detrás de cada
+conclusión sea explícita y auditable por el usuario.
+
 ## Tipos de skills
 
 ### Skills de análisis

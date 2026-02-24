@@ -77,3 +77,32 @@ nodo: datos/series-clave
 8. Yangshan premium
 9. TC/RC spot (Fastmarkets)
 10. Noticias clave de la semana
+
+## Disponibilidad en el pipeline
+
+Las series marcadas con **P** están disponibles automáticamente via el pipeline
+(`datos/scripts/fetch_all.py`). Las marcadas con **M** requieren ingreso manual
+o suscripción de pago.
+
+| Serie | `series_id` en DuckDB | Disponibilidad |
+|---|---|---|
+| LME Cash Settlement | `lme_cash` | **P** — `fetch_lme.py` |
+| LME 3-Month | `lme_3m` | **P** — `fetch_lme.py` |
+| COMEX HG Front Month | `comex_hg` (USD/lb), `comex_hg_ton` (USD/ton) | **P** — `fetch_comex.py` |
+| LME Total Stocks | `clean.inventories` (lme, total) | **P** — `fetch_lme.py` |
+| CFTC COT Managed Money | `clean.cot` | **P** — `fetch_cot.py` |
+| DXY | `dxy` | **P** — `fetch_comex.py` |
+| Gold | `gold` | **P** — `fetch_comex.py` |
+| US 10Y Yield | `us_10y` | **P** — `fetch_comex.py` |
+| S&P 500 | `sp500` | **P** — `fetch_comex.py` |
+| Fed Funds Rate | `fed_funds` | **P** — `fetch_fred.py` |
+| Industrial Production | `indpro` | **P** — `fetch_fred.py` |
+| LME Cash-3M Spread | `lme_cash_3m` | **P** — `calc_spreads.py` |
+| COMEX-LME Arb | `comex_lme_arb` | **P** — `calc_spreads.py` |
+| Cu/Au Ratio | `cu_au_ratio` | **P** — `calc_spreads.py` |
+| SHFE CU / SHFE Stocks | — | **M** — no disponible gratis |
+| Yangshan Premium | — | **M** — Fastmarkets/SMM (pago) |
+| TC/RC Spot | — | **M** — Fastmarkets (pago) |
+| Premiums (Rotterdam, Midwest) | — | **M** — Fastmarkets/Platts (pago) |
+| COMEX Stocks (registered/eligible) | — | **M** — CME web (pendiente) |
+| PMI Caixin / ISM | — | **M** — ISM no publica en FRED |

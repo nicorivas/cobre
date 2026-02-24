@@ -58,6 +58,13 @@ nodo: datos/fuentes
 | **Mining.com** | Noticias de minería |
 | **Metal Bulletin (Fastmarkets)** | Premium assessments, market news |
 
+## Agregadores de datos gratuitos
+
+| Fuente | Datos | Acceso |
+|---|---|---|
+| **Westmetall** | LME Cash, 3M, stocks diarios (desde 2008) | Gratis, web scraping |
+| **Yahoo Finance** | COMEX HG, DXY, Gold, equities | Gratis, `yfinance` Python library |
+
 ## Datos gubernamentales y de comercio
 
 | Fuente | Datos |

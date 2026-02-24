@@ -55,6 +55,10 @@ Los skills en `skills/` son procedimientos analíticos paso a paso. Cada skill:
 
 Para ejecutar un skill: lee el skill → carga el contexto declarado → sigue el procedimiento.
 
+**Formato de output**: todo análisis debe seguir el formato estándar definido en
+`skills/formato-output.md`. Incluir siempre el veredicto con justificación verbal
+que permita al usuario auditar la lógica.
+
 ## Convenciones
 
 - Los archivos de contenido usan Markdown con encabezados jerárquicos
