@@ -39,7 +39,12 @@ cobre/
 ├── tecnico/             ← Indicadores técnicos, estructura, señales
 ├── macro/               ← Ciclos, China, transición energética, geopolítica
 ├── esg/                 ← Frameworks, regulatorio, carbono, impacto en mercado
-├── datos/               ← Fuentes, APIs, series clave
+├── datos/               ← Fuentes, APIs, series clave, pipeline de datos
+│   ├── scripts/         ← Fetchers (COMEX, LME, COT, FRED) + calculador de spreads
+│   ├── queries/         ← SQL preconstruido para skills
+│   ├── seeds/           ← Catálogo de series
+│   ├── schema.sql       ← DDL de la base DuckDB
+│   └── cobre.duckdb     ← Base de datos local (gitignored, se regenera)
 ├── referencias/         ← Catálogo de papers, reportes, resúmenes
 ├── noticias/            ← Fuentes, temas activos, log de noticias procesadas
 ├── skills/              ← Procedimientos analíticos reutilizables
@@ -58,6 +63,45 @@ Para ejecutar un skill: lee el skill → carga el contexto declarado → sigue e
 **Formato de output**: todo análisis debe seguir el formato estándar definido en
 `skills/formato-output.md`. Incluir siempre el veredicto con justificación verbal
 que permita al usuario auditar la lógica.
+
+## Datos cuantitativos
+
+El directorio `datos/` incluye un pipeline automatizado que descarga datos de mercado
+a una base DuckDB local. Ver `datos/README.md` para setup completo.
+
+### Uso rápido
+
+```bash
+# Setup (una vez)
+python3 -m venv datos/.venv
+datos/.venv/bin/pip install -r datos/requirements.txt
+cp datos/.env.example datos/.env   # agregar FRED_API_KEY
+datos/.venv/bin/python datos/scripts/init_db.py
+
+# Actualizar datos
+datos/.venv/bin/python datos/scripts/fetch_all.py
+```
+
+### Consultar datos desde un skill
+
+```python
+import sys; sys.path.insert(0, "datos/scripts")
+from db import query
+
+# Últimos precios
+query("SELECT * FROM clean.latest_prices")
+
+# Posicionamiento con percentil
+query("SELECT report_date, managed_money_net, ... FROM clean.cot ...")
+```
+
+### Series disponibles
+
+El pipeline descarga: precios COMEX y LME (diarios), inventarios LME (diarios),
+posicionamiento CFTC COT (semanal), indicadores macro FRED (diarios/mensuales).
+Calcula: COMEX-LME arb, LME Cash-3M spread, Cu/Au ratio.
+
+Ver `datos/series-clave.md` para la tabla completa de disponibilidad (pipeline vs manual).
 
 ## Convenciones
 
@@ -79,3 +123,8 @@ Al agregar un nuevo documento:
 Al procesar una noticia:
 1. Usar el skill `skills/procesar-noticia.md`
 2. El skill actualiza `noticias/temas-activos.md` y opcionalmente el log
+
+Al ejecutar un análisis que requiere datos cuantitativos:
+1. Correr `datos/scripts/fetch_all.py` para actualizar la base de datos
+2. El skill puede consultar datos via `datos/scripts/db.py` → `query()`
+3. Las queries preconstruidas están en `datos/queries/`
