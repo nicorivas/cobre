@@ -1,0 +1,603 @@
+# indice.yaml — Grafo de conocimiento del mercado del cobre
+# ============================================================
+# El agente SIEMPRE lee este archivo primero para decidir qué cargar.
+#
+# Estructura:
+#   nodos   → cada documento con metadata, tags y conexiones
+#   rutas   → secuencias predefinidas para análisis comunes
+#
+# Relaciones:
+#   requiere     → para entender este nodo, primero lee estos (upstream)
+#   alimenta     → este nodo es input de estos otros (downstream)
+#   relacionado  → temas que se solapan (bidireccional)
+
+meta:
+  version: 1
+  ultima_actualizacion: 2025-02-24
+
+# ═══════════════════════════════════════════════════════════════
+# NODOS
+# ═══════════════════════════════════════════════════════════════
+
+nodos:
+
+  # ── FUNDAMENTOS ──────────────────────────────────────────────
+
+  fundamentos/cadena-de-valor:
+    archivo: fundamentos/cadena-de-valor.md
+    resumen: >
+      Visión end-to-end: mina → concentrado → fundición → refinación → semis → producto final.
+      Incluye actores principales en cada etapa.
+    tags: [cadena-de-valor, mina, concentrado, fundicion, refinacion, semis, catodo]
+    requiere: []
+    alimenta: [fundamentos/oferta, fundamentos/demanda]
+    relacionado: [fundamentos/tcrc, fundamentos/grado-y-especificaciones]
+
+  fundamentos/oferta:
+    archivo: fundamentos/oferta.md
+    resumen: >
+      Producción primaria por método (SxEw vs concentrado), país, empresa.
+      Proyectos en pipeline. Disruption rates históricas y proyectadas (~5-6%).
+    tags: [produccion, minas, SxEw, concentrado, chile, peru, congo, disruptions, pipeline]
+    requiere: [fundamentos/cadena-de-valor]
+    alimenta: [fundamentos/balance-de-mercado, fundamentos/cost-curves, fundamentos/tcrc]
+    relacionado: [fundamentos/scrap-y-reciclaje, macro/geopolitica]
+
+  fundamentos/demanda:
+    archivo: fundamentos/demanda.md
+    resumen: >
+      Demanda por sector (construcción, electricidad, transporte, electrónica, industrial)
+      y por región. Intensidad de uso por aplicación. Modelos bottom-up.
+    tags: [demanda, sectores, EVs, grid, construccion, electronica, china, intensidad, data-centers]
+    requiere: [fundamentos/cadena-de-valor]
+    alimenta: [fundamentos/balance-de-mercado]
+    relacionado: [macro/transicion-energetica, macro/china, macro/ciclos-y-superciclos]
+
+  fundamentos/balance-de-mercado:
+    archivo: fundamentos/balance-de-mercado.md
+    resumen: >
+      Surplus/déficit global. Metodologías ICSG, CRU, Wood Mackenzie.
+      Refined balance vs concentrates balance. Inventarios implícitos.
+    tags: [balance, surplus, deficit, ICSG, CRU, wood-mac, inventarios-implicitos]
+    requiere: [fundamentos/oferta, fundamentos/demanda, fundamentos/scrap-y-reciclaje]
+    alimenta: [pricing/estructura-de-termino, trading/inventarios]
+    relacionado: [fundamentos/tcrc]
+
+  fundamentos/grado-y-especificaciones:
+    archivo: fundamentos/grado-y-especificaciones.md
+    resumen: >
+      Grados de cobre (Grade A, off-grade). Especificaciones LME/COMEX para entrega.
+      Brands registrados. Diferencias físicas y su impacto en premiums.
+    tags: [grado, grade-A, especificaciones, LME-brands, COMEX-specs, catodo]
+    requiere: [fundamentos/cadena-de-valor]
+    alimenta: [pricing/premiums-y-descuentos]
+    relacionado: [derivados/microestructura]
+
+  fundamentos/cost-curves:
+    archivo: fundamentos/cost-curves.md
+    resumen: >
+      Curvas de costo C1/C2/C3 (Wood Mac, CRU). Productor marginal como price floor.
+      Análisis por cuartil. Cash costs vs AISC. By-product credits.
+    tags: [costos, C1, C2, C3, productor-marginal, price-floor, AISC, cuartil, by-products]
+    requiere: [fundamentos/oferta]
+    alimenta: [pricing/mecanismos-de-precio]
+    relacionado: [macro/ciclos-y-superciclos, esg/huella-de-carbono]
+
+  fundamentos/scrap-y-reciclaje:
+    archivo: fundamentos/scrap-y-reciclaje.md
+    resumen: >
+      Supply secundario (~33% del total). Spread cátodo-scrap como indicador.
+      Elasticidad de sustitución. Categorías de scrap (No.1, No.2, birch cliff).
+      Cambio de pricing COMEX→LME en EE.UU.
+    tags: [scrap, reciclaje, secundario, spread-catodo-scrap, economia-circular, birch-cliff]
+    requiere: [fundamentos/cadena-de-valor]
+    alimenta: [fundamentos/balance-de-mercado]
+    relacionado: [esg/frameworks, pricing/premiums-y-descuentos]
+
+  fundamentos/tcrc:
+    archivo: fundamentos/tcrc.md
+    resumen: >
+      Treatment charges y refining charges. Benchmark anual vs spot.
+      Indicador de tightness del mercado de concentrados. TC/RC negativos en 2025.
+    tags: [TC, RC, concentrado, smelters, benchmark-anual, spot-TC, fundiciones]
+    requiere: [fundamentos/oferta]
+    alimenta: [fundamentos/balance-de-mercado]
+    relacionado: [fundamentos/cost-curves]
+
+  # ── PRICING ──────────────────────────────────────────────────
+
+  pricing/mecanismos-de-precio:
+    archivo: pricing/mecanismos-de-precio.md
+    resumen: >
+      Cómo se forma el precio del cobre. LME (rings, kerb, electronic), COMEX, SHFE.
+      Jerarquía de price discovery: LME lidera, seguido COMEX y SHFE.
+      Fixing diario. Pricing periods para contratos físicos.
+    tags: [LME, COMEX, SHFE, price-discovery, fixing, ring, pricing-periods]
+    requiere: []
+    alimenta: [pricing/estructura-de-termino, pricing/premiums-y-descuentos, pricing/benchmarks]
+    relacionado: [derivados/futuros-y-forwards, derivados/microestructura]
+
+  pricing/estructura-de-termino:
+    archivo: pricing/estructura-de-termino.md
+    resumen: >
+      Contango/backwardation. Convenience yield. Theory of storage.
+      Cash-3M spread en LME. Roll yield y sus implicaciones.
+    tags: [contango, backwardation, forward-curve, convenience-yield, cash-3M, roll-yield, theory-of-storage]
+    requiere: [pricing/mecanismos-de-precio, trading/inventarios]
+    alimenta: [derivados/spreads, derivados/coberturas]
+    relacionado: [fundamentos/balance-de-mercado]
+
+  pricing/premiums-y-descuentos:
+    archivo: pricing/premiums-y-descuentos.md
+    resumen: >
+      Premiums regionales (Yangshan, Rotterdam, Midwest US). Premium por calidad.
+      Wedge entre precio LME y precio real pagado por consumidores. Seasonalidad de premiums.
+    tags: [premiums, Yangshan, Rotterdam, midwest, descuentos, regional, calidad]
+    requiere: [pricing/mecanismos-de-precio]
+    alimenta: []
+    relacionado: [trading/flujos-comerciales, fundamentos/grado-y-especificaciones, macro/china]
+
+  pricing/benchmarks:
+    archivo: pricing/benchmarks.md
+    resumen: >
+      Proveedores de precio y data: Platts (S&P Global), Fastmarkets (AMM/MB),
+      CRU, SMM. Metodologías de assessment. Cuáles usar para qué.
+    tags: [Platts, Fastmarkets, CRU, SMM, assessment, proveedores-datos]
+    requiere: [pricing/mecanismos-de-precio]
+    alimenta: []
+    relacionado: [datos/fuentes]
+
+  pricing/cross-asset:
+    archivo: pricing/cross-asset.md
+    resumen: >
+      Ratio cobre/oro como indicador macro (~0.85 corr con yields).
+      Cobre vs USD (correlación negativa). Cobre vs aluminio (sustitución).
+      Correlaciones con PMI, tasas, equities.
+    tags: [cobre-oro, cobre-USD, cobre-aluminio, correlaciones, PMI, cross-asset]
+    requiere: []
+    alimenta: []
+    relacionado: [macro/indicadores-macro, macro/ciclos-y-superciclos, tecnico/indicadores]
+
+  # ── TRADING ──────────────────────────────────────────────────
+
+  trading/participantes:
+    archivo: trading/participantes.md
+    resumen: >
+      Quién opera en el mercado: productores, consumidores, trading houses (Trafigura,
+      Glencore, Mercuria), bancos, hedge funds. Roles y motivaciones de cada uno.
+    tags: [participantes, trading-houses, productores, consumidores, bancos, hedge-funds]
+    requiere: []
+    alimenta: [trading/posicionamiento]
+    relacionado: [derivados/coberturas]
+
+  trading/inventarios:
+    archivo: trading/inventarios.md
+    resumen: >
+      Stocks visibles: LME (on-warrant, cancelled warrants), COMEX, SHFE.
+      Stocks invisibles: bonded warehouses China, SRB, traders.
+      Days of coverage. Relación inventarios-precio (no lineal).
+    tags: [inventarios, LME-stocks, COMEX-stocks, SHFE-stocks, warrants, invisibles, bonded, SRB, days-of-coverage]
+    requiere: [fundamentos/balance-de-mercado]
+    alimenta: [pricing/estructura-de-termino, derivados/microestructura]
+    relacionado: [trading/flujos-comerciales, macro/china]
+
+  trading/flujos-comerciales:
+    archivo: trading/flujos-comerciales.md
+    resumen: >
+      Flujos globales de cobre refinado y concentrado. Rutas principales
+      (Chile→China, Congo→China, etc.). Impacto de tariffs en redireccionamiento.
+    tags: [flujos, comercio, exportaciones, importaciones, rutas, tariffs]
+    requiere: []
+    alimenta: [trading/inventarios, pricing/premiums-y-descuentos]
+    relacionado: [macro/geopolitica, macro/china]
+
+  trading/posicionamiento:
+    archivo: trading/posicionamiento.md
+    resumen: >
+      CFTC COT reports para COMEX. Net longs/shorts de managed money.
+      Señales contrarian en extremos históricos. Análisis de open interest.
+    tags: [COT, CFTC, managed-money, especuladores, comerciales, contrarian, open-interest]
+    requiere: []
+    alimenta: [tecnico/senales]
+    relacionado: [derivados/opciones-y-volatilidad, trading/inventarios]
+
+  trading/estacionalidad:
+    archivo: trading/estacionalidad.md
+    resumen: >
+      Patrones estacionales de precio, inventarios y premiums.
+      Efecto construcción en primavera. Restocking chino post-Año Nuevo.
+      Seasonal vs countereasonal signals.
+    tags: [estacionalidad, patrones, construccion, restocking, seasonal]
+    requiere: []
+    alimenta: []
+    relacionado: [fundamentos/demanda, derivados/spreads, trading/inventarios]
+
+  # ── DERIVADOS ────────────────────────────────────────────────
+
+  derivados/futuros-y-forwards:
+    archivo: derivados/futuros-y-forwards.md
+    resumen: >
+      Contratos de futuros: COMEX HG (25,000 lbs), LME 3M, SHFE.
+      Especificaciones, márgenes, settlement. OTC forwards.
+      Roll mechanics y estrategias.
+    tags: [futuros, forwards, COMEX-HG, LME-3M, margenes, settlement, roll]
+    requiere: [pricing/mecanismos-de-precio]
+    alimenta: [derivados/coberturas, derivados/spreads]
+    relacionado: [pricing/estructura-de-termino]
+
+  derivados/opciones-y-volatilidad:
+    archivo: derivados/opciones-y-volatilidad.md
+    resumen: >
+      Superficie de volatilidad implícita (skew + term structure).
+      Greeks (delta, gamma, vega, theta). Estrategias: collars, straddles,
+      calendar spreads. IV vs realized vol. Event-driven vol.
+    tags: [opciones, volatilidad, IV, skew, Greeks, collars, straddles, vega, vol-surface]
+    requiere: [pricing/mecanismos-de-precio]
+    alimenta: [derivados/coberturas]
+    relacionado: [derivados/spreads, trading/posicionamiento]
+
+  derivados/spreads:
+    archivo: derivados/spreads.md
+    resumen: >
+      Calendar spreads (intra-market). Inter-exchange: COMEX-LME, LME-SHFE.
+      Inter-commodity: Cu-Al, Cu-Zn. Margin efficiency.
+      Spread como señal de microestructura.
+    tags: [spreads, calendar, inter-exchange, COMEX-LME, LME-SHFE, arbitrage, Cu-Al]
+    requiere: [derivados/futuros-y-forwards, pricing/estructura-de-termino]
+    alimenta: []
+    relacionado: [derivados/opciones-y-volatilidad, trading/estacionalidad]
+
+  derivados/coberturas:
+    archivo: derivados/coberturas.md
+    resumen: >
+      Hedge ratios óptimos (min variance, Copula-GJR-VAR, DCC-GARCH).
+      Instrumentos por perfil: futuros, opciones, swaps, collars.
+      Hedge effectiveness testing. Tenor matching. Basis risk.
+    tags: [coberturas, hedging, hedge-ratio, min-variance, basis-risk, swaps, OTC]
+    requiere: [derivados/futuros-y-forwards, derivados/opciones-y-volatilidad]
+    alimenta: []
+    relacionado: [trading/participantes, pricing/estructura-de-termino]
+
+  derivados/microestructura:
+    archivo: derivados/microestructura.md
+    resumen: >
+      LME warehouse system: warrants, cancelled warrants, queues, load-out rates.
+      Deliverable stocks vs total stocks. COMEX registered vs eligible.
+      Impacto de microestructura en pricing y squeezes.
+    tags: [microestructura, warrants, cancelled-warrants, queues, registered, eligible, squeeze]
+    requiere: [trading/inventarios]
+    alimenta: []
+    relacionado: [pricing/mecanismos-de-precio, fundamentos/grado-y-especificaciones]
+
+  # ── TECNICO ──────────────────────────────────────────────────
+
+  tecnico/indicadores:
+    archivo: tecnico/indicadores.md
+    resumen: >
+      Moving averages (20/50/100/200 SMA y EMA). RSI. MACD. ADX.
+      Bollinger Bands. Ichimoku. Volumen y open interest como confirmación.
+    tags: [SMA, EMA, RSI, MACD, ADX, Bollinger, Ichimoku, volumen, open-interest]
+    requiere: []
+    alimenta: [tecnico/senales]
+    relacionado: [trading/posicionamiento, pricing/cross-asset]
+
+  tecnico/estructura-de-mercado:
+    archivo: tecnico/estructura-de-mercado.md
+    resumen: >
+      Identificación de tendencia vs rango. Soporte y resistencia.
+      Breakouts y breakdowns. Patrones de precio (head & shoulders,
+      double top/bottom, flags). Fibonacci retracements.
+    tags: [tendencia, rango, soporte, resistencia, breakout, patrones, Fibonacci]
+    requiere: []
+    alimenta: [tecnico/senales]
+    relacionado: [tecnico/indicadores]
+
+  tecnico/senales:
+    archivo: tecnico/senales.md
+    resumen: >
+      Golden cross / death cross. Divergencias RSI-precio.
+      Volumen + OI como confirmación. Señales combinadas técnico + posicionamiento.
+      Framework para integrar señales técnicas con fundamentales.
+    tags: [golden-cross, death-cross, divergencias, senales-combinadas, confirmacion]
+    requiere: [tecnico/indicadores, tecnico/estructura-de-mercado, trading/posicionamiento]
+    alimenta: []
+    relacionado: [derivados/opciones-y-volatilidad]
+
+  # ── MACRO ────────────────────────────────────────────────────
+
+  macro/ciclos-y-superciclos:
+    archivo: macro/ciclos-y-superciclos.md
+    resumen: >
+      Superciclos de commodities (20-30 años). Tesis de superciclo actual.
+      Ciclo de capex minero. Stock per cápita y curva S de uso.
+      Copper intensity vs PIB per cápita.
+    tags: [superciclo, ciclo-capex, stock-per-capita, curva-S, PIB, commodities]
+    requiere: []
+    alimenta: []
+    relacionado: [fundamentos/cost-curves, fundamentos/demanda, macro/transicion-energetica]
+
+  macro/china:
+    archivo: macro/china.md
+    resumen: >
+      China como ~55% de demanda global. Sectores clave: property, grid, EVs, AC.
+      Políticas de estímulo. SRB (State Reserve Bureau). Importaciones de concentrado
+      y refinado. Yangshan premium como indicador. PMI Caixin.
+    tags: [china, property, grid, EVs, estimulo, SRB, Yangshan, PMI-Caixin, importaciones]
+    requiere: []
+    alimenta: [fundamentos/demanda, trading/flujos-comerciales]
+    relacionado: [pricing/premiums-y-descuentos, trading/inventarios, macro/geopolitica]
+
+  macro/transicion-energetica:
+    archivo: macro/transicion-energetica.md
+    resumen: >
+      EVs (83 kg Cu/BEV vs 23 kg/ICE). Energía renovable (solar, eólica, offshore).
+      Grid upgrades e interconexiones. Data centers y AI.
+      Proyecciones de demanda incremental por tecnología.
+    tags: [EVs, renovables, solar, eolica, grid, data-centers, AI, electrificacion]
+    requiere: []
+    alimenta: [fundamentos/demanda]
+    relacionado: [macro/ciclos-y-superciclos, esg/huella-de-carbono]
+
+  macro/geopolitica:
+    archivo: macro/geopolitica.md
+    resumen: >
+      Tariffs y guerra comercial (Section 232, tariffs Trump 2025).
+      Riesgo de nacionalización (Chile, Perú, Congo).
+      Sanciones. Critical minerals designation.
+      COMEX-LME arb como señal de tariff expectations.
+    tags: [tariffs, Section-232, nacionalizacion, sanciones, critical-minerals, guerra-comercial]
+    requiere: []
+    alimenta: [trading/flujos-comerciales, derivados/spreads]
+    relacionado: [fundamentos/oferta, macro/china, esg/regulatorio]
+
+  macro/indicadores-macro:
+    archivo: macro/indicadores-macro.md
+    resumen: >
+      PMI global y por país (ISM, Caixin, Eurozone). USD (DXY).
+      Tasas de interés (Fed, PBOC). Credit impulse China.
+      Leading indicators para demanda de cobre.
+    tags: [PMI, ISM, DXY, USD, tasas, Fed, PBOC, credit-impulse, leading-indicators]
+    requiere: []
+    alimenta: []
+    relacionado: [pricing/cross-asset, macro/china, macro/ciclos-y-superciclos]
+
+  # ── ESG ──────────────────────────────────────────────────────
+
+  esg/frameworks:
+    archivo: esg/frameworks.md
+    resumen: >
+      Copper Mark (33 criterios, ~1/3 producción global). JDDS para LME
+      responsible sourcing. GRI 14. ICMM principles. TSM de MAC.
+    tags: [Copper-Mark, JDDS, GRI, ICMM, TSM, responsible-sourcing]
+    requiere: []
+    alimenta: [esg/impacto-en-mercado]
+    relacionado: [fundamentos/oferta, esg/regulatorio]
+
+  esg/regulatorio:
+    archivo: esg/regulatorio.md
+    resumen: >
+      CBAM (EU Carbon Border Adjustment). CSRD reporting. Critical minerals
+      designation (US, EU, AU). Due diligence requirements.
+      Impacto de regulación en costos de producción.
+    tags: [CBAM, CSRD, critical-minerals, due-diligence, regulacion, EU, US]
+    requiere: []
+    alimenta: [esg/impacto-en-mercado]
+    relacionado: [macro/geopolitica, esg/frameworks]
+
+  esg/huella-de-carbono:
+    archivo: esg/huella-de-carbono.md
+    resumen: >
+      Emisiones por proceso (pirometalurgia vs hidrometalurgia). Scope 1/2/3.
+      Descarbonización de smelters. Copper como enabler vs emisor.
+      Carbon footprint por origen.
+    tags: [carbono, emisiones, Scope-1, Scope-2, Scope-3, descarbonizacion, pirometalurgia]
+    requiere: [fundamentos/cadena-de-valor]
+    alimenta: [esg/impacto-en-mercado]
+    relacionado: [fundamentos/cost-curves]
+
+  esg/impacto-en-mercado:
+    archivo: esg/impacto-en-mercado.md
+    resumen: >
+      >25% del supply bloqueado por obstáculos ESG. Green premiums emergentes.
+      Supply constraints por permisos ambientales. Investor pressure.
+      Impacto en cost curves y oferta futura.
+    tags: [green-premium, supply-constraints, permisos, investor-pressure, ESG-supply]
+    requiere: [esg/frameworks, esg/regulatorio, esg/huella-de-carbono]
+    alimenta: [fundamentos/oferta]
+    relacionado: [fundamentos/cost-curves, macro/ciclos-y-superciclos]
+
+  # ── DATOS ────────────────────────────────────────────────────
+
+  datos/fuentes:
+    archivo: datos/fuentes.md
+    resumen: >
+      Directorio de fuentes de datos: ICSG, WBMS, LME, COMEX, SHFE, CFTC,
+      CRU, Wood Mac, SMM, Fastmarkets, Platts, Bloomberg, Reuters.
+    tags: [fuentes, ICSG, WBMS, LME, COMEX, SHFE, CFTC, Bloomberg, Reuters]
+    requiere: []
+    alimenta: []
+    relacionado: [pricing/benchmarks]
+
+  datos/apis-y-acceso:
+    archivo: datos/apis-y-acceso.md
+    resumen: >
+      APIs disponibles: LME DataStore, CME DataMine, Quandl/Nasdaq Data Link,
+      FRED, World Bank. Acceso libre vs suscripción. Rate limits.
+    tags: [APIs, LME-DataStore, CME-DataMine, Quandl, FRED, acceso]
+    requiere: []
+    alimenta: []
+    relacionado: [datos/fuentes]
+
+  datos/series-clave:
+    archivo: datos/series-clave.md
+    resumen: >
+      Las series de datos más importantes para monitorear: precio LME cash/3M,
+      COMEX front month, inventarios LME/COMEX/SHFE, COT positioning,
+      Yangshan premium, TC/RC spot, DXY, PMI global.
+    tags: [series, monitoreo, precio, inventarios, COT, Yangshan, TC-RC, DXY, PMI]
+    requiere: []
+    alimenta: []
+    relacionado: [datos/fuentes, datos/apis-y-acceso]
+
+  # ── REFERENCIAS ──────────────────────────────────────────────
+
+  referencias/catalogo:
+    archivo: referencias/catalogo.md
+    resumen: >
+      Lista maestra de papers, reportes y libros de referencia.
+      Con metadata: autor, año, tema, relevancia, link si disponible.
+    tags: [catalogo, papers, reportes, libros, referencias]
+    requiere: []
+    alimenta: []
+    relacionado: [referencias/por-tema]
+
+  referencias/por-tema:
+    archivo: referencias/por-tema.md
+    resumen: >
+      Índice de referencias agrupadas por tema del repo.
+      Permite encontrar rápido qué papers respaldan cada sección.
+    tags: [indice-tematico, referencias]
+    requiere: [referencias/catalogo]
+    alimenta: []
+    relacionado: []
+
+  # ── NOTICIAS ─────────────────────────────────────────────────
+
+  noticias/fuentes:
+    archivo: noticias/fuentes.md
+    resumen: >
+      Fuentes de noticias del mercado: Reuters Metals, Bloomberg Metals,
+      Fastmarkets, SMM, Mining.com, CRU Copper Monitor.
+    tags: [noticias, fuentes-noticias, Reuters, Bloomberg, Fastmarkets, SMM]
+    requiere: []
+    alimenta: []
+    relacionado: [datos/fuentes]
+
+  noticias/temas-activos:
+    archivo: noticias/temas-activos.md
+    resumen: >
+      Temas que están moviendo el mercado actualmente. Se actualiza
+      con cada noticia procesada. Snapshot del narrativo dominante.
+    tags: [temas-activos, narrativa, mercado-actual]
+    requiere: []
+    alimenta: []
+    relacionado: []
+
+# ═══════════════════════════════════════════════════════════════
+# RUTAS — Secuencias predefinidas para análisis comunes
+# ═══════════════════════════════════════════════════════════════
+
+rutas:
+
+  impacto-disrupcion-oferta:
+    descripcion: "Evaluar impacto de una disrupción de suministro (huelga, desastre, sanción)"
+    entrada: "Evento que afecta producción"
+    secuencia:
+      - fundamentos/oferta              # ¿Cuánta producción afecta?
+      - fundamentos/cost-curves         # ¿Productor de bajo o alto costo?
+      - fundamentos/balance-de-mercado  # ¿Mercado ya en déficit?
+      - trading/inventarios             # ¿Hay buffer en stocks?
+      - pricing/estructura-de-termino   # ¿Cómo reacciona la curva?
+      - derivados/opciones-y-volatilidad  # ¿Cómo reacciona la vol?
+    contexto_condicional:
+      - si: pais == chile or pais == peru
+        agregar: [macro/geopolitica]
+      - si: evento == huelga
+        agregar: [trading/estacionalidad]
+
+  cambio-demanda-china:
+    descripcion: "Evaluar cambio en demanda china (estímulo, desaceleración, política)"
+    entrada: "Noticia sobre economía o política china"
+    secuencia:
+      - macro/china                     # Contexto del evento
+      - fundamentos/demanda             # ¿Qué sectores afecta?
+      - fundamentos/balance-de-mercado  # Impacto en balance global
+      - trading/inventarios             # Movimiento de stocks SHFE/bonded
+      - pricing/premiums-y-descuentos   # Yangshan premium
+      - derivados/spreads               # LME-SHFE arb
+    contexto_condicional:
+      - si: sector == property
+        agregar: [macro/indicadores-macro]
+      - si: sector == EVs
+        agregar: [macro/transicion-energetica]
+
+  evaluar-nivel-de-precio:
+    descripcion: "¿El precio actual está justificado por fundamentales?"
+    entrada: "Precio spot actual"
+    secuencia:
+      - fundamentos/cost-curves         # ¿Dónde estamos en la curva?
+      - fundamentos/balance-de-mercado  # ¿Surplus o déficit?
+      - trading/inventarios             # ¿Days of coverage?
+      - trading/posicionamiento         # ¿Especuladores muy largos/cortos?
+      - pricing/cross-asset             # ¿Ratio Cu/Au, Cu/USD coherente?
+      - tecnico/indicadores             # ¿Sobrecomprado/sobrevendido?
+    contexto_condicional:
+      - si: precio > percentil_90_historico
+        agregar: [macro/ciclos-y-superciclos]
+      - si: divergencia_cross_asset
+        agregar: [macro/indicadores-macro]
+
+  disenar-cobertura:
+    descripcion: "Diseñar estrategia de hedging para exposición física"
+    entrada: "Perfil de exposición (comprador/vendedor, volumen, plazo)"
+    secuencia:
+      - derivados/futuros-y-forwards    # Instrumentos base
+      - derivados/opciones-y-volatilidad  # Nivel de vol y skew
+      - derivados/coberturas            # Ratios e instrumentos
+      - pricing/estructura-de-termino   # Costo de roll
+      - derivados/spreads               # Oportunidades de spread
+    contexto_condicional:
+      - si: exposicion == consumidor
+        agregar: [pricing/premiums-y-descuentos]
+      - si: plazo > 12_meses
+        agregar: [fundamentos/balance-de-mercado]
+
+  analisis-semanal:
+    descripcion: "Revisión semanal estándar del mercado"
+    entrada: "Inicio de semana"
+    secuencia:
+      - trading/inventarios
+      - pricing/estructura-de-termino
+      - trading/posicionamiento
+      - pricing/premiums-y-descuentos
+      - tecnico/indicadores
+      - noticias/temas-activos
+    contexto_condicional:
+      - si: movimiento_precio > 3pct
+        agregar: [derivados/opciones-y-volatilidad, tecnico/senales]
+      - si: noticia_china
+        agregar: [macro/china]
+      - si: noticia_geopolitica
+        agregar: [macro/geopolitica]
+
+  evaluar-proyecto-minero:
+    descripcion: "Evaluar un proyecto de desarrollo minero o expansión"
+    entrada: "Datos del proyecto (ubicación, capacidad, timeline, capex)"
+    secuencia:
+      - fundamentos/oferta              # Contexto de oferta global
+      - fundamentos/cost-curves         # ¿Dónde caería en la curva?
+      - esg/impacto-en-mercado          # Riesgo de permisos
+      - esg/regulatorio                 # Requerimientos regulatorios
+      - macro/geopolitica               # Riesgo país
+      - macro/ciclos-y-superciclos      # Timing del ciclo
+
+  impacto-tariff-o-sancion:
+    descripcion: "Evaluar impacto de nuevo tariff o sanción comercial"
+    entrada: "Descripción del tariff/sanción"
+    secuencia:
+      - macro/geopolitica               # Contexto geopolítico
+      - trading/flujos-comerciales      # Flujos afectados
+      - derivados/spreads               # Arb COMEX-LME
+      - pricing/premiums-y-descuentos   # Impacto en premiums regionales
+      - trading/inventarios             # Redistribución de stocks
+      - fundamentos/balance-de-mercado  # Impacto neto en balance
+
+  analisis-volatilidad:
+    descripcion: "Evaluar condiciones de volatilidad y oportunidades"
+    entrada: "Observación de vol (spike, crush, skew cambio)"
+    secuencia:
+      - derivados/opciones-y-volatilidad  # Estado de la superficie
+      - trading/posicionamiento           # ¿Posicionamiento contribuyendo?
+      - derivados/spreads                 # ¿Spreads reflejando la misma señal?
+      - tecnico/indicadores               # ¿Breakout técnico inminente?
+      - noticias/temas-activos            # ¿Evento catalizador identificable?
