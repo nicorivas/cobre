@@ -23,3 +23,7 @@ cn_cu_imports_conc,China Copper Concentrate Imports,manual,monthly,metric_tons,C
 lme_cash_3m,LME Cash-3M Spread,calculated,daily,usd_per_ton,LME cash minus 3-month spread (backwardation if positive)
 comex_lme_arb,COMEX-LME Arbitrage,calculated,daily,usd_per_ton,COMEX equivalent price minus LME price
 cu_au_ratio,Copper/Gold Ratio,calculated,daily,ratio,Copper price divided by gold price (both in USD/ton equiv)
+usdcny,USD/CNY Exchange Rate,yfinance,daily,rate,USD to CNY exchange rate
+shfe_cu_ton,SHFE Copper Front Month (USD/ton),calculated,daily,usd_per_ton,SHFE copper converted from RMB to USD
+lme_shfe_arb,LME-SHFE Import Arb,calculated,daily,usd_per_ton,SHFE USD/ton minus LME cash (positive = import window open)
+shfe_cu_top20_net,SHFE Cu Top 20 Net Position,shfe,daily,lots,Top 20 FCMs long minus short OI (not equivalent to COT)

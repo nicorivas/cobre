@@ -4,9 +4,11 @@ Calcula spreads y ratios derivados a partir de datos en clean.prices.
 
 Series calculadas:
   - comex_hg_ton: COMEX HG convertido de USD/lb a USD/ton (auxiliar)
+  - shfe_cu_ton: SHFE Cu convertido de RMB/ton a USD/ton (auxiliar)
   - cu_au_ratio: Copper/Gold ratio
   - lme_cash_3m: LME Cash - 3M spread (positivo = backwardation)
   - comex_lme_arb: COMEX (en USD/ton) - LME Cash (positivo = COMEX premium)
+  - lme_shfe_arb: SHFE (en USD/ton) - LME Cash (positivo = SHFE premium, import arb proxy)
 
 Uso:
     python datos/scripts/calc_spreads.py
@@ -40,6 +42,31 @@ def main():
         comex_ton["unit"] = "usd_per_ton"
         upsert_prices(con, comex_ton)
         print(f"COMEX USD/ton: {len(comex_ton)} filas → clean.prices")
+
+    # --- SHFE en USD/ton (auxiliar para comparaciones con LME) ---
+    shfe_usd = con.execute("""
+        SELECT
+            shfe.trade_date,
+            shfe.close AS shfe_rmb,
+            fx.close AS usdcny
+        FROM clean.prices shfe
+        JOIN clean.prices fx
+            ON shfe.trade_date = fx.trade_date
+        WHERE shfe.series_id = 'shfe_cu'
+          AND fx.series_id = 'usdcny'
+          AND fx.close > 0
+        ORDER BY shfe.trade_date
+    """).fetchdf()
+
+    if not shfe_usd.empty:
+        shfe_ton = pd.DataFrame({
+            "trade_date": shfe_usd["trade_date"],
+            "series_id": "shfe_cu_ton",
+            "close": shfe_usd["shfe_rmb"] / shfe_usd["usdcny"],
+            "unit": "usd_per_ton",
+        })
+        upsert_prices(con, shfe_ton)
+        print(f"SHFE USD/ton: {len(shfe_ton)} filas → clean.prices")
 
     # --- Copper/Gold ratio ---
     # Cobre en USD/lb, oro en USD/oz — ratio adimensional
@@ -119,6 +146,33 @@ def main():
         })
         upsert_spreads(con, arb_df)
         print(f"COMEX-LME arb: {len(arb_df)} filas → clean.spreads")
+
+    # --- LME-SHFE Import Arb ---
+    # SHFE (convertido a USD/ton) - LME Cash
+    # Positivo = SHFE premium → import window abierta (rentable importar a China)
+    # No incluye costos de transporte ni premium — es un proxy bruto
+    lme_shfe = con.execute("""
+        SELECT
+            shfe.trade_date,
+            shfe.close AS shfe_usd,
+            lme.close AS lme_cash
+        FROM clean.prices shfe
+        JOIN clean.prices lme
+            ON shfe.trade_date = lme.trade_date
+        WHERE shfe.series_id = 'shfe_cu_ton'
+          AND lme.series_id = 'lme_cash'
+        ORDER BY shfe.trade_date
+    """).fetchdf()
+
+    if not lme_shfe.empty:
+        lme_shfe_df = pd.DataFrame({
+            "trade_date": lme_shfe["trade_date"],
+            "spread_id": "lme_shfe_arb",
+            "value": lme_shfe["shfe_usd"] - lme_shfe["lme_cash"],
+            "unit": "usd_per_ton",
+        })
+        upsert_spreads(con, lme_shfe_df)
+        print(f"LME-SHFE arb: {len(lme_shfe_df)} filas → clean.spreads")
 
     # --- Resumen ---
     summary = con.execute(

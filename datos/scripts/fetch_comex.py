@@ -46,6 +46,11 @@ TICKERS = {
         "unit": "index",
         "name": "S&P 500",
     },
+    "CNY=X": {
+        "series_id": "usdcny",
+        "unit": "rate",
+        "name": "USD/CNY Exchange Rate",
+    },
 }
 
 

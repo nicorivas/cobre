@@ -73,14 +73,15 @@ datos/
 ├── .env                   ← API keys (gitignored)
 ├── .env.example           ← template de configuración
 ├── seeds/
-│   └── series_catalog.csv ← catálogo de series (24 definidas)
+│   └── series_catalog.csv ← catálogo de series (28 definidas)
 ├── scripts/
 │   ├── db.py              ← módulo core (connect, ingest, upsert, query)
 │   ├── init_db.py         ← inicializa la DB desde schema.sql + seeds
-│   ├── fetch_comex.py     ← COMEX HG, DXY, Gold, US 10Y, S&P 500
+│   ├── fetch_comex.py     ← COMEX HG, DXY, Gold, US 10Y, S&P 500, USD/CNY
 │   ├── fetch_fred.py      ← Fed Funds, ISM PMI, Trade Weighted USD
 │   ├── fetch_cot.py       ← CFTC COT managed money copper
-│   ├── calc_spreads.py    ← spreads derivados (Cu/Au ratio, COMEX→USD/ton)
+│   ├── fetch_shfe.py      ← SHFE Cu precios, inventarios, posicionamiento top 20
+│   ├── calc_spreads.py    ← spreads derivados (Cu/Au, COMEX-LME, LME-SHFE arb)
 │   └── fetch_all.py       ← orquestador
 └── queries/
     ├── snapshot_semanal.sql   ← para el skill analisis-semanal
@@ -118,11 +119,12 @@ Views útiles:
 
 ## Fuentes y API keys
 
-| Fetcher | Fuente | API Key |
-|---|---|---|
-| `fetch_comex.py` | Yahoo Finance (yfinance) | No requiere |
-| `fetch_cot.py` | CFTC (descarga CSV público) | No requiere |
-| `fetch_fred.py` | FRED API | `FRED_API_KEY` (gratis) |
+| Fetcher | Fuente | API Key | Nota |
+|---|---|---|---|
+| `fetch_comex.py` | Yahoo Finance (yfinance) | No requiere | |
+| `fetch_cot.py` | CFTC (descarga CSV público) | No requiere | |
+| `fetch_fred.py` | FRED API | `FRED_API_KEY` (gratis) | |
+| `fetch_shfe.py` | SHFE endpoints JSON/HTML | No requiere | Lento desde fuera de China (~60s timeout) |
 
 ## Consultar datos
 

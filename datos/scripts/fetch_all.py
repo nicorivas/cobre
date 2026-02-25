@@ -77,7 +77,11 @@ def main():
     # 5. CFTC COT
     results["cot"] = run_script("fetch_cot.py", [f"--backfill={cot_backfill}"])
 
-    # 6. Spreads calculados (depende de COMEX + LME, correr al final)
+    # 6. SHFE (lento desde fuera de China — timeout de 60s por request)
+    shfe_args = [f"--days={price_days}"]
+    results["shfe"] = run_script("fetch_shfe.py", shfe_args)
+
+    # 7. Spreads calculados (depende de COMEX + LME + SHFE, correr al final)
     results["spreads"] = run_script("calc_spreads.py")
 
     # Resumen final

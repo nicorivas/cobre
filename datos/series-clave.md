@@ -100,7 +100,11 @@ o suscripción de pago.
 | LME Cash-3M Spread | `lme_cash_3m` | **P** — `calc_spreads.py` |
 | COMEX-LME Arb | `comex_lme_arb` | **P** — `calc_spreads.py` |
 | Cu/Au Ratio | `cu_au_ratio` | **P** — `calc_spreads.py` |
-| SHFE CU / SHFE Stocks | — | **M** — no disponible gratis |
+| SHFE CU Front Month | `shfe_cu` (RMB/t), `shfe_cu_ton` (USD/t) | **P** — `fetch_shfe.py` |
+| SHFE Stocks | `clean.inventories` (shfe, total) | **P** — `fetch_shfe.py` |
+| SHFE Top 20 Net Position | `shfe_cu_top20_net` | **P** — `fetch_shfe.py` |
+| USD/CNY | `usdcny` | **P** — `fetch_comex.py` |
+| LME-SHFE Import Arb | `lme_shfe_arb` | **P** — `calc_spreads.py` |
 | Yangshan Premium | — | **M** — Fastmarkets/SMM (pago) |
 | TC/RC Spot | — | **M** — Fastmarkets (pago) |
 | Premiums (Rotterdam, Midwest) | — | **M** — Fastmarkets/Platts (pago) |
