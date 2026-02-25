@@ -1,81 +1,129 @@
-# Cobre — Base de Conocimiento del Mercado del Cobre
+# Cobre
 
-Repositorio de conocimiento estructurado para el análisis del mercado del cobre,
-diseñado para ser navegado tanto por humanos como por agentes AI.
+Base de conocimiento estructurada del mercado del cobre, diseñada para ser
+navegada por un asistente AI. Cargala en Claude, ChatGPT, o cualquier LLM
+con acceso a archivos y obtené un analista de commodities que entiende
+fundamentos, pricing, derivados, posicionamiento, y macro.
 
-## Qué es esto
+## Quick start
 
-Una base de conocimiento + pipeline de datos que cubre:
-- **Fundamentos**: oferta, demanda, balance, costos, scrap, TC/RC
-- **Pricing**: mecanismos de precio, curva forward, premiums, ratios cross-asset
-- **Trading**: inventarios, flujos comerciales, posicionamiento especulativo
-- **Derivados**: futuros, opciones, volatilidad, spreads, coberturas
-- **Análisis técnico**: indicadores, estructura de mercado, señales
-- **Macro**: ciclos, China, transición energética, geopolítica
-- **ESG**: frameworks, regulación, carbono
-- **Skills**: procedimientos analíticos reutilizables
-- **Datos**: pipeline automatizado de datos cuantitativos con base DuckDB
+```bash
+git clone https://github.com/nicorivas/cobre.git
+cd cobre
 
-## Cómo navegar
+# Setup del pipeline de datos (opcional pero recomendado)
+python3 -m venv datos/.venv
+datos/.venv/bin/pip install -r datos/requirements.txt
+cp datos/.env.example datos/.env   # agregar FRED_API_KEY (gratis, opcional)
+datos/.venv/bin/python datos/scripts/init_db.py
+datos/.venv/bin/python datos/scripts/fetch_all.py
+```
 
-El archivo `indice.yaml` es el **grafo de conocimiento** central. Define cada documento
-como un nodo con:
-- `resumen`: qué contiene
-- `tags`: temas que cubre
-- `requiere`: documentos que hay que leer antes
-- `alimenta`: documentos que usan este como input
-- `relacionado`: documentos con temas que se solapan
+Luego abrí el repo en tu asistente AI favorito. El archivo `CLAUDE.md` contiene
+las instrucciones que el agente necesita para navegar el grafo de conocimiento,
+ejecutar skills, y consultar datos.
 
-Las **rutas** en el índice son secuencias predefinidas de nodos para análisis comunes
-(evaluar una disrupción, analizar demanda china, diseñar cobertura, etc.).
+## Qué hay adentro
 
-## Pipeline de datos
+### Conocimiento (35 documentos interconectados)
 
-El repo incluye un pipeline que descarga datos de mercado desde fuentes gratuitas
-y los almacena en una base DuckDB local.
+| Dominio | Temas |
+|---|---|
+| **Fundamentos** | Oferta, demanda, balance, cost curves, scrap, TC/RC |
+| **Pricing** | Mecanismos de precio, curva forward, premiums, cross-asset |
+| **Trading** | Inventarios, flujos comerciales, posicionamiento, estacionalidad |
+| **Derivados** | Futuros, opciones, volatilidad, spreads, coberturas |
+| **Técnico** | Indicadores, estructura de mercado, señales combinadas |
+| **Macro** | Ciclos, China, transición energética, geopolítica |
+| **ESG** | Frameworks, regulación, carbono, impacto en mercado |
 
-### Datos disponibles
+Cada documento es un nodo en un grafo definido en `indice.yaml`, con relaciones
+explícitas (`requiere`, `alimenta`, `relacionado`) y rutas predefinidas para
+análisis comunes.
+
+### Datos cuantitativos
+
+Pipeline Python que descarga datos de mercado a una base DuckDB local:
 
 | Fuente | Series | Frecuencia |
 |---|---|---|
-| Yahoo Finance | COMEX HG, DXY, Gold, US 10Y, S&P 500 | Diaria |
+| Yahoo Finance | COMEX HG, DXY, Gold, US 10Y, S&P 500, USD/CNY | Diaria |
 | Westmetall | LME Cash, LME 3M, LME stocks | Diaria |
+| SHFE | Precios Cu, inventarios, posicionamiento top 20 | Diaria |
 | CFTC | COT managed money, producers, swap dealers | Semanal |
-| FRED | Fed Funds Rate, Industrial Production, Trade Weighted USD | Diaria/Mensual |
-| Calculado | COMEX-LME arb, LME Cash-3M spread, Cu/Au ratio | Diaria |
+| FRED | Fed Funds Rate, Industrial Production | Diaria/Mensual |
+| Calculado | COMEX-LME arb, LME-SHFE arb, LME Cash-3M, Cu/Au ratio | Diaria |
 
-### Setup
+Ver `datos/README.md` para documentación completa del pipeline.
 
-```bash
-# 1. Crear entorno virtual
-python3 -m venv datos/.venv
-datos/.venv/bin/pip install -r datos/requirements.txt
+### Skills
 
-# 2. Configurar API keys
-cp datos/.env.example datos/.env
-# Editar datos/.env con tu FRED_API_KEY (gratis: https://fred.stlouisfed.org/docs/api/api_key.html)
+Los skills son procedimientos analíticos que el asistente ejecuta paso a paso.
+Cada uno define qué contexto cargar, qué datos consultar, y qué formato de
+output producir.
 
-# 3. Inicializar base de datos
-datos/.venv/bin/python datos/scripts/init_db.py
+| Skill | Qué hace |
+|---|---|
+| `analisis-semanal` | Revisión semanal completa del mercado |
+| `analisis-posicionamiento` | Analizar COT semanal y señales contrarian |
+| `analisis-tecnico` | Evaluar niveles técnicos y señales |
+| `analisis-spreads` | Analizar spreads inter/intra-market |
+| `analisis-curva-forward` | Interpretar estructura de término |
+| `analisis-volatilidad` | Evaluar superficie de vol y régimen |
+| `analisis-cost-curve` | Precio actual vs curva de costos |
+| `analisis-tcrc` | Analizar mercado de TC/RC y concentrados |
+| `interpretar-inventarios` | Interpretar movimientos de stocks LME/COMEX/SHFE |
+| `monitor-china` | Evaluar impacto de noticias o datos chinos |
+| `evaluar-proyecto-minero` | Evaluar viabilidad de proyecto de cobre |
+| `evaluar-impacto-esg` | Evaluar impacto ESG en mercado u operación |
+| `procesar-noticia` | Procesar noticia y actualizar temas activos |
+| `resumir-paper` | Resumir paper/reporte y catalogar en referencias |
+| `actualizar-temas-activos` | Revisar y actualizar narrativa de mercado |
+| `init` | Orientarse: estado de datos, temas activos, sugerir siguiente paso |
 
-# 4. Cargar datos
-datos/.venv/bin/python datos/scripts/fetch_all.py            # últimos 30 días
-datos/.venv/bin/python datos/scripts/fetch_all.py --backfill  # histórico completo
+Para ejecutar un skill, simplemente pedilo: *"hazme el análisis semanal"*,
+*"procesa esta noticia: [texto]"*, *"¿cómo está el posicionamiento?"*.
+
+## Cómo funciona
+
+```
+indice.yaml         →  Grafo de conocimiento (leer primero)
+  ├── nodos         →  35 documentos con metadata, tags, conexiones
+  └── rutas         →  9 secuencias predefinidas para análisis comunes
+
+skills/             →  Procedimientos analíticos (el asistente los ejecuta)
+datos/scripts/      →  Pipeline de datos (fetch → DuckDB → query)
+CLAUDE.md           →  Instrucciones para el agente AI
 ```
 
-### Consultar datos
+El agente lee `indice.yaml`, identifica qué nodos son relevantes para tu
+pregunta (por ruta predefinida o por tags), carga solo esos documentos,
+y sigue el procedimiento del skill correspondiente. Si necesita datos
+cuantitativos, consulta la base DuckDB via `datos/scripts/db.py`.
 
-```python
-import sys; sys.path.insert(0, "datos/scripts")
-from db import query
+## Extender
 
-query("SELECT * FROM clean.latest_prices")
-query("SELECT report_date, managed_money_net FROM clean.cot ORDER BY report_date DESC LIMIT 5")
-query("SELECT trade_date, value FROM clean.spreads WHERE spread_id = 'comex_lme_arb' ORDER BY trade_date DESC LIMIT 5")
-```
+**Agregar un documento**: crear el .md con front matter, agregar el nodo
+a `indice.yaml` con tags y conexiones, actualizar nodos relacionados.
 
-Ver `datos/README.md` para documentación completa del pipeline, schema, y queries.
+**Agregar una fuente de datos**: crear `datos/scripts/fetch_*.py` siguiendo
+el patrón existente (ingest raw → upsert clean), agregar al orquestador
+`fetch_all.py`.
 
-## Para agentes AI
+**Agregar un skill**: crear `skills/nombre.md` con front matter (nombre,
+descripcion, inputs, outputs) y procedimiento numerado. Referenciar los
+nodos de contexto del `indice.yaml`.
 
-Ver `CLAUDE.md` para instrucciones detalladas de navegación y uso del pipeline.
+## Limitaciones
+
+- Esto es una **base de conocimiento**, no un sistema de trading. No genera
+  señales de compra/venta ni ejecuta órdenes.
+- Los datos del pipeline son **gratuitos y delayed**. No reemplaza un
+  terminal Bloomberg ni un feed en tiempo real.
+- El contenido refleja un punto de vista informado pero no es asesoría
+  financiera. Verificá siempre los datos contra fuentes primarias.
+- SHFE puede ser lento desde fuera de China (~60s por request).
+
+## Licencia
+
+MIT. Ver [LICENSE](LICENSE).

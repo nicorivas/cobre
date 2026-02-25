@@ -4,9 +4,18 @@ datos/cobre.duckdb.wal
 
 # Secrets
 .env
+datos/.env
 
 # Python
 __pycache__/
 *.pyc
 .venv/
 datos/.venv/
+
+# OS
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+*.swp
